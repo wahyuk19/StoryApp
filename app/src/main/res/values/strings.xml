@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">StoryApp</string>
+    <string name="title_signup_page">Lengkapi data diri anda</string>
+    <string name="title_login_page">Masukkan data anda</string>
+    <string name="title_welcome_page">Selamat Datang</string>
+    <string name="name">Nama</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="signup">Daftar</string>
+    <string name="login">Masuk</string>
+    <string name="logout">Keluar</string>
+    <string name="logo_desc">logo_desc</string>
+    <string name="error_email">Lengkapi email anda</string>
+    <string name="error_password">Password minimal 6 karakter</string>
+    <string name="hint_name">Andy</string>
+    <string name="hint_email">andy@email.com</string>
+    <string name="hint_password">min. 6 karakter</string>
+    <string name="error_name">Nama tidak boleh kosong</string>
+    <string name="message_main_page">Selamat belajar di Dicoding</string>
+    <string name="greeting">Halo, %1$s,</string>
+
+</resources>
