@@ -1,9 +1,12 @@
 package com.dicoding.storyapp.ui.auth.login
 
+import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.os.Handler
+import android.os.Looper
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.EditText
@@ -13,10 +16,15 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
+import com.dicoding.storyapp.BuildConfig
+import com.dicoding.storyapp.R
+import com.dicoding.storyapp.data.model.LoginRequest
+import com.dicoding.storyapp.data.model.UserModel
 import com.dicoding.storyapp.data.model.UserPreference
+import com.dicoding.storyapp.data.viewmodel.ViewModelFactory
 import com.dicoding.storyapp.databinding.ActivityLoginBinding
-import com.dicoding.storyapp.ui.utils.Constants
-import com.dicoding.storyapp.ui.viewmodel.ViewModelFactory
+import com.dicoding.storyapp.ui.main.MainActivity
+import com.dicoding.storyapp.ui.utils.*
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
@@ -25,6 +33,7 @@ class LoginActivity : AppCompatActivity() {
     private var passwordStatus = false
     private lateinit var binding: ActivityLoginBinding
     private lateinit var loginViewModel: LoginViewModel
+    private lateinit var dialog: Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,25 +47,44 @@ class LoginActivity : AppCompatActivity() {
 
     private fun setupAction() {
         binding.loginButton.setOnClickListener {
-            Log.e("clicked","test")
-//            if(!email.matches(emailPattern)) {
-//                binding.edRegisterEmail.requestFocus()
-//                binding.edRegisterEmail.error = getString(R.string.error_email)
-//            }
-//            if(password.length < 6){
-//                if(email.matches(emailPattern)){
-//                    binding.edRegisterPassword.requestFocus()
-//                }else{
-//                    binding.edRegisterEmail.requestFocus()
-//                }
-//                binding.edRegisterPassword.setError(getString(R.string.error_password),null)
-//            }
+            messageLoading(this, getString(R.string.loading), dialog)
+            val email = binding.edLoginEmail.text.toString()
+            val password = binding.edLoginPassword.text.toString()
+            val tripleDES = TripleDES(BuildConfig.KEY)
+            val encPass = tripleDES.encryptPKCS5(password)
+            val encPassHex = encPass.toHex()
+            val login = LoginRequest(email, encPassHex)
+            loginViewModel.login(login).observe(this) {
+                if (it.error == false) {
+                    dialog.dismiss()
+                    messageSuccess(this, getString(R.string.success_login), dialog)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        val name = it.loginResult?.name.toString()
+                        val token = it.loginResult?.token.toString()
+                        val session = UserModel(token, name, "", "", false)
+                        loginViewModel.saveSession(UserPreference.getInstance(dataStore), session)
+                        val intent = Intent(this, MainActivity::class.java)
+                        intent.flags =
+                            Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                        startActivity(intent)
+                        finish()
+                        dialog.dismiss()
+                    }, 2000)
+                } else {
+                    dialog.dismiss()
+                    messageFailed(this, it.message, dialog)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        dialog.dismiss()
+                    }, 2000)
+                }
+
+            }
         }
     }
 
-    private fun controllerEditText(textInput: EditText,type: Int) {
+    private fun controllerEditText(textInput: EditText, type: Int) {
         textInput.addTextChangedListener {
-            when(type){
+            when (type) {
                 1 -> {
                     emailStatus = Constants.EMAIL_STATUS
                 }
@@ -67,32 +95,32 @@ class LoginActivity : AppCompatActivity() {
 
             binding.loginButton.isEnabled = emailStatus && passwordStatus
         }
-//        val isEmptyValue = textInput.text?.isEmpty()
-//        binding.signupButton.isEnabled = isEmptyValue != true
-//        if(binding.signupButton.isEnabled){
-//            Log.e("status","clicked")
-//        }
     }
 
     private fun setupViewModel() {
+        val factory = ViewModelFactory.getInstance(this)
         loginViewModel = ViewModelProvider(
-            this,
-            ViewModelFactory(UserPreference.getInstance(dataStore))
+            this, factory
         )[LoginViewModel::class.java]
     }
 
     private fun setupView() {
         binding.loginButton.isEnabled = emailStatus && passwordStatus
-        controllerEditText(binding.edLoginEmail,1)
-        controllerEditText(binding.edLoginPassword,2)
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+        controllerEditText(binding.edLoginEmail, 1)
+        controllerEditText(binding.edLoginPassword, 2)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.hide(WindowInsets.Type.statusBars())
-        }else{
+        } else {
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
             )
         }
         supportActionBar?.hide()
+        dialog = Dialog(this)
     }
+
+    fun ByteArray.toHex(): String =
+        joinToString(separator = "") { eachByte -> "%02x".format(eachByte) }
+
 }

@@ -32,8 +32,10 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         }
     }
 
-    suspend fun login(){
+    suspend fun login(user: UserModel){
         dataStore.edit { preferences ->
+            preferences[TOKEN_KEY] = user.token
+            preferences[NAME_KEY] = user.name
             preferences[STATE_KEY] = true
         }
     }

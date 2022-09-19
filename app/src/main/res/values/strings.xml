@@ -16,7 +16,31 @@
     <string name="hint_email">andy@email.com</string>
     <string name="hint_password">min. 6 karakter</string>
     <string name="error_name">Nama tidak boleh kosong</string>
-    <string name="message_main_page">Selamat belajar di Dicoding</string>
-    <string name="greeting">Halo, %1$s,</string>
+    <string name="message_main_page">Selamat datang di Dicoding Stories</string>
+    <string name="greeting">Halo, %1$s</string>
+    <string name="story_list">Daftar Cerita</string>
+    <string name="settings">Pengaturan</string>
+    <string name="img_story">Story Image</string>
+    <string name="title">%1$s</string>
+    <string name="created_by">Dibuat oleh %1$s</string>
+    <string name="btn_add">Button add</string>
+    <string name="created_at">%1$s</string>
+    <string name="detail_image">Detail image</string>
+    <string name="description">deskripsi</string>
+    <string name="camera">Kamera</string>
+    <string name="gallery">Galeri</string>
+    <string name="upload">Unggah</string>
+    <string name="error_description">Deskripsi tidak boleh kosong</string>
+    <string name="content_type">multipart/form-data</string>
+    <string name="success">Sukses</string>
+    <string name="loading">Memuat</string>
+    <string name="success_login">Berhasil masuk</string>
+    <string name="ok">OK</string>
+    <string name="failed_img">failed_img</string>
+    <string name="success_img">success_img</string>
+    <string name="success_reg">Berhasil daftar</string>
+    <string name="uploading">Mengunggah</string>
+    <string name="permission">Gagal mendapat permission</string>
+    <string name="image_not_exist">Masukkan gambar terlebih dahulu</string>
 
 </resources>

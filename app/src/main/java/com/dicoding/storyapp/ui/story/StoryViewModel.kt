@@ -1,0 +1,22 @@
+package com.dicoding.storyapp.ui.story
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import com.dicoding.storyapp.data.model.UserModel
+import com.dicoding.storyapp.data.model.UserPreference
+import com.dicoding.storyapp.data.remote.StoriesRepository
+import com.dicoding.storyapp.data.remote.response.StoriesResponse
+
+class StoryViewModel(private val storiesRepository: StoriesRepository) : ViewModel() {
+    fun getUser(pref: UserPreference): LiveData<UserModel> {
+        return pref.getUser().asLiveData()
+    }
+
+    fun getStories(
+        token: String,
+        page: Int?,
+        size: Int?,
+        location: Int?
+    ): LiveData<StoriesResponse> = storiesRepository.getStories(token, page, size, location)
+}

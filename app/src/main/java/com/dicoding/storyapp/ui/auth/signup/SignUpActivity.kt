@@ -1,24 +1,22 @@
 package com.dicoding.storyapp.ui.auth.signup
 
-import android.content.Context
+import android.app.Dialog
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.os.Handler
+import android.os.Looper
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
-import com.dicoding.storyapp.data.model.UserPreference
+import com.dicoding.storyapp.BuildConfig
+import com.dicoding.storyapp.R
+import com.dicoding.storyapp.data.model.RegisterRequest
+import com.dicoding.storyapp.data.viewmodel.ViewModelFactory
 import com.dicoding.storyapp.databinding.ActivitySignUpBinding
-import com.dicoding.storyapp.ui.utils.Constants
-import com.dicoding.storyapp.ui.viewmodel.ViewModelFactory
-
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+import com.dicoding.storyapp.ui.utils.*
 
 class SignUpActivity : AppCompatActivity() {
     private var nameStatus = false
@@ -26,6 +24,7 @@ class SignUpActivity : AppCompatActivity() {
     private var passwordStatus = false
     private lateinit var binding: ActivitySignUpBinding
     private lateinit var signUpViewModel: SignUpViewModel
+    private lateinit var dialog: Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,25 +38,35 @@ class SignUpActivity : AppCompatActivity() {
 
     private fun setupAction() {
         binding.signupButton.setOnClickListener {
-            Log.e("clicked","test")
-//            if(!email.matches(emailPattern)) {
-//                binding.edRegisterEmail.requestFocus()
-//                binding.edRegisterEmail.error = getString(R.string.error_email)
-//            }
-//            if(password.length < 6){
-//                if(email.matches(emailPattern)){
-//                    binding.edRegisterPassword.requestFocus()
-//                }else{
-//                    binding.edRegisterEmail.requestFocus()
-//                }
-//                binding.edRegisterPassword.setError(getString(R.string.error_password),null)
-//            }
+            messageLoading(this, getString(R.string.loading), dialog)
+            val name = binding.edRegisterName.text.toString()
+            val email = binding.edRegisterEmail.text.toString()
+            val password = binding.edRegisterPassword.text.toString()
+            val tripleDES = TripleDES(BuildConfig.KEY)
+            val encPass = tripleDES.encryptPKCS5(password)
+            val encPassHex = encPass.toHex()
+            val register = RegisterRequest(name, email, encPassHex)
+            signUpViewModel.register(register).observe(this) {
+                if (it.error == false) {
+                    dialog.dismiss()
+                    messageSuccess(this, getString(R.string.success_reg), dialog)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        finish()
+                    }, 2000)
+                } else {
+                    dialog.dismiss()
+                    messageFailed(this, it.message, dialog)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        dialog.dismiss()
+                    }, 2000)
+                }
+            }
         }
     }
 
-    private fun controllerEditText(textInput: EditText,type: Int) {
+    private fun controllerEditText(textInput: EditText, type: Int) {
         textInput.addTextChangedListener {
-            when(type){
+            when (type) {
                 1 -> {
                     nameStatus = Constants.NAME_STATUS
                 }
@@ -71,33 +80,33 @@ class SignUpActivity : AppCompatActivity() {
 
             binding.signupButton.isEnabled = nameStatus && emailStatus && passwordStatus
         }
-//        val isEmptyValue = textInput.text?.isEmpty()
-//        binding.signupButton.isEnabled = isEmptyValue != true
-//        if(binding.signupButton.isEnabled){
-//            Log.e("status","clicked")
-//        }
     }
 
     private fun setupViewModel() {
+        val factory = ViewModelFactory.getInstance(this)
         signUpViewModel = ViewModelProvider(
-            this,
-            ViewModelFactory(UserPreference.getInstance(dataStore))
+            this, factory
         )[SignUpViewModel::class.java]
     }
 
     private fun setupView() {
         binding.signupButton.isEnabled = nameStatus && emailStatus && passwordStatus
-        controllerEditText(binding.edRegisterName,1)
-        controllerEditText(binding.edRegisterEmail,2)
-        controllerEditText(binding.edRegisterPassword,3)
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+        controllerEditText(binding.edRegisterName, 1)
+        controllerEditText(binding.edRegisterEmail, 2)
+        controllerEditText(binding.edRegisterPassword, 3)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.hide(WindowInsets.Type.statusBars())
-        }else{
+        } else {
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
             )
         }
         supportActionBar?.hide()
+        dialog = Dialog(this)
     }
+
+    fun ByteArray.toHex(): String =
+        joinToString(separator = "") { eachByte -> "%02x".format(eachByte) }
+
 }

@@ -3,19 +3,21 @@ package com.dicoding.storyapp.ui.main
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.view.WindowInsets
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import com.dicoding.storyapp.R
 import com.dicoding.storyapp.data.model.UserPreference
+import com.dicoding.storyapp.data.viewmodel.ViewModelFactory
 import com.dicoding.storyapp.databinding.ActivityMainBinding
 import com.dicoding.storyapp.ui.auth.welcome.WelcomeActivity
-import com.dicoding.storyapp.ui.viewmodel.ViewModelFactory
+import com.dicoding.storyapp.ui.story.StoryActivity
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
@@ -47,12 +49,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
+        val factory = ViewModelFactory.getInstance(this)
         mainViewModel = ViewModelProvider(
-            this,
-            ViewModelFactory(UserPreference.getInstance(dataStore))
+            this, factory
         )[MainViewModel::class.java]
 
-        mainViewModel.getUser().observe(this) { user ->
+        mainViewModel.getUser(UserPreference.getInstance(dataStore)).observe(this) { user ->
             if (user.isLogin) {
                 binding.nameTextView.text = getString(R.string.greeting, user.name)
             } else {
@@ -63,8 +65,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupAction() {
+        binding.actionStory.setOnClickListener {
+            startActivity(Intent(this, StoryActivity::class.java))
+        }
+
+        binding.actionSetting.setOnClickListener {
+            startActivity(Intent(Settings.ACTION_LOCALE_SETTINGS))
+        }
+
         binding.actionLogout.setOnClickListener {
-            mainViewModel.logout()
+            mainViewModel.logout(UserPreference.getInstance(dataStore))
         }
     }
 }
