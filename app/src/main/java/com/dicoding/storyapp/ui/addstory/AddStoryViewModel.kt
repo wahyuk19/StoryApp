@@ -10,10 +10,14 @@ import com.dicoding.storyapp.data.remote.response.GlobalResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
-class AddStoryViewModel(private val mStoriesRepository: StoriesRepository): ViewModel() {
+class AddStoryViewModel(private val mStoriesRepository: StoriesRepository) : ViewModel() {
     fun getUser(pref: UserPreference): LiveData<UserModel> {
         return pref.getUser().asLiveData()
     }
 
-    fun addStory(token: String,imageMultipart: MultipartBody.Part,requestBody: RequestBody): LiveData<GlobalResponse> = mStoriesRepository.postStory(token, imageMultipart, requestBody)
+    fun addStory(
+        token: String,
+        imageMultipart: MultipartBody.Part,
+        requestBody: RequestBody
+    ): LiveData<GlobalResponse> = mStoriesRepository.postStory(token, imageMultipart, requestBody)
 }

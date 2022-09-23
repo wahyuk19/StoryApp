@@ -36,6 +36,7 @@ class StoryActivity : AppCompatActivity() {
     private val location = 0
     private lateinit var token: String
     private lateinit var dialog: Dialog
+    private val delayedTIme = 2000L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,7 +74,7 @@ class StoryActivity : AppCompatActivity() {
         val storyAdapter = StoryAdapter()
 
         storyViewModel.getUser(UserPreference.getInstance(dataStore)).observe(this) { user ->
-            messageLoading(this, getString(R.string.loading), dialog)
+            messageLoading(getString(R.string.loading), dialog)
             token = user.token
             storyViewModel.getStories("Bearer $token", page, size, location)
                 .observe(this) { story ->
@@ -82,7 +83,7 @@ class StoryActivity : AppCompatActivity() {
                         storyAdapter.setData(story.listStory)
                     } else {
                         dialog.dismiss()
-                        messageFailed(this, story.message, dialog)
+                        messageFailed(story.message, dialog)
                         Handler(Looper.getMainLooper()).postDelayed({
                             dialog.dismiss()
                         }, 2000)
@@ -100,7 +101,7 @@ class StoryActivity : AppCompatActivity() {
         val resultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == Activity.RESULT_OK) {
-                    messageLoading(this, getString(R.string.loading), dialog)
+                    messageLoading(getString(R.string.loading), dialog)
                     storyViewModel.getStories("Bearer $token", page, size, location)
                         .observe(this) { story ->
                             if (story.error == false) {
@@ -108,10 +109,10 @@ class StoryActivity : AppCompatActivity() {
                                 storyAdapter.setData(story.listStory)
                             } else {
                                 dialog.dismiss()
-                                messageFailed(this, story.message, dialog)
+                                messageFailed(story.message, dialog)
                                 Handler(Looper.getMainLooper()).postDelayed({
                                     dialog.dismiss()
-                                }, 2000)
+                                }, delayedTIme)
                             }
                         }
 

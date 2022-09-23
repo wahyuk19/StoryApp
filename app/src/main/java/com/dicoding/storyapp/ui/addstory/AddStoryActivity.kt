@@ -44,6 +44,7 @@ class AddStoryActivity : AppCompatActivity() {
     private lateinit var addStoryViewModel: AddStoryViewModel
     private var getFile: File? = null
     private lateinit var dialog: Dialog
+    private val delayedTIme = 2000L
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -103,7 +104,7 @@ class AddStoryActivity : AppCompatActivity() {
     private fun setupViewModel() {
         val factory = ViewModelFactory.getInstance(this)
         addStoryViewModel = ViewModelProvider(
-            this,factory
+            this, factory
         )[AddStoryViewModel::class.java]
 
     }
@@ -118,7 +119,7 @@ class AddStoryActivity : AppCompatActivity() {
         }
 
         binding.uploadButton.setOnClickListener {
-            messageLoading(this,getString(R.string.uploading),dialog)
+            messageLoading(getString(R.string.uploading), dialog)
             uploadImage()
         }
     }
@@ -129,8 +130,9 @@ class AddStoryActivity : AppCompatActivity() {
             val desc = binding.edAddDescription.text.toString()
             val description: RequestBody
 
-            if(desc.isNotEmpty()){
-                description = binding.edAddDescription.text.toString().toRequestBody("text/plain".toMediaType())
+            if (desc.isNotEmpty()) {
+                description = binding.edAddDescription.text.toString()
+                    .toRequestBody("text/plain".toMediaType())
                 val requestImageFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
                 val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
                     "photo",
@@ -138,35 +140,44 @@ class AddStoryActivity : AppCompatActivity() {
                     requestImageFile
                 )
 
-                addStoryViewModel.getUser(UserPreference.getInstance(dataStore)).observe(this){ user ->
-                    addStoryViewModel.addStory("Bearer ${user.token}",imageMultipart,description).observe(this){
-                        if(it.error == false){
-                            dialog.dismiss()
-                            messageSuccess(this,getString(R.string.success),dialog)
-                            Handler(Looper.getMainLooper()).postDelayed({
-                                setResult(Activity.RESULT_OK)
-                                finish()
-                            },2000)
+                addStoryViewModel.getUser(UserPreference.getInstance(dataStore))
+                    .observe(this) { user ->
+                        addStoryViewModel.addStory(
+                            "Bearer ${user.token}",
+                            imageMultipart,
+                            description
+                        ).observe(this) {
+                            if (it.error == false) {
+                                dialog.dismiss()
+                                messageSuccess(getString(R.string.success), dialog)
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    setResult(Activity.RESULT_OK)
+                                    finish()
+                                }, delayedTIme)
 
-                        }else{
-                            dialog.dismiss()
-                            messageFailed(this,it.message,dialog)
-                            Handler(Looper.getMainLooper()).postDelayed({
-                                setResult(Activity.RESULT_OK)
-                                finish()
-                            },2000)
+                            } else {
+                                dialog.dismiss()
+                                messageFailed(it.message, dialog)
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    setResult(Activity.RESULT_OK)
+                                    finish()
+                                }, delayedTIme)
+                            }
                         }
-                    }
 
-                }
-            }else{
-                Toast.makeText(this,getString(R.string.error_description),Toast.LENGTH_SHORT).show()
+                    }
+            } else {
+                Toast.makeText(this, getString(R.string.error_description), Toast.LENGTH_SHORT)
+                    .show()
             }
 
 
-
         } else {
-            Toast.makeText(this@AddStoryActivity, getString(R.string.image_not_exist), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this@AddStoryActivity,
+                getString(R.string.image_not_exist),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 

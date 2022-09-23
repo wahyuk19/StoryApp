@@ -11,11 +11,6 @@ import com.dicoding.storyapp.data.remote.response.GlobalResponse
 import kotlinx.coroutines.launch
 
 class SignUpViewModel(private val storiesRepository: StoriesRepository) : ViewModel() {
-    fun saveUser(pref: UserPreference,user: UserModel){
-        viewModelScope.launch {
-            pref.saveUser(user)
-        }
-    }
-
-    fun register(register: RegisterRequest): LiveData<GlobalResponse> = storiesRepository.postRegister(register)
+    fun register(register: RegisterRequest): LiveData<GlobalResponse> =
+        storiesRepository.postRegister(register)
 }

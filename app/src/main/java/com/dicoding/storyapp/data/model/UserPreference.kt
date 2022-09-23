@@ -10,19 +10,19 @@ import kotlinx.coroutines.flow.map
 
 class UserPreference private constructor(private val dataStore: DataStore<Preferences>) {
 
-    fun getUser(): Flow<UserModel>{
+    fun getUser(): Flow<UserModel> {
         return dataStore.data.map { preferences ->
             UserModel(
-                preferences[TOKEN_KEY] ?:"",
-                preferences[NAME_KEY] ?:"",
-                preferences[EMAIL_KEY] ?:"",
-                preferences[PASSWORD_KEY] ?:"",
+                preferences[TOKEN_KEY] ?: "",
+                preferences[NAME_KEY] ?: "",
+                preferences[EMAIL_KEY] ?: "",
+                preferences[PASSWORD_KEY] ?: "",
                 preferences[STATE_KEY] ?: false
             )
         }
     }
 
-    suspend fun saveUser(user: UserModel){
+    suspend fun saveUser(user: UserModel) {
         dataStore.edit { preferences ->
             preferences[TOKEN_KEY] = user.token
             preferences[NAME_KEY] = user.name
@@ -32,7 +32,7 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         }
     }
 
-    suspend fun login(user: UserModel){
+    suspend fun login(user: UserModel) {
         dataStore.edit { preferences ->
             preferences[TOKEN_KEY] = user.token
             preferences[NAME_KEY] = user.name
@@ -40,7 +40,7 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         }
     }
 
-    suspend fun logout(){
+    suspend fun logout() {
         dataStore.edit { preferences ->
             preferences[TOKEN_KEY] = ""
             preferences[NAME_KEY] = ""
@@ -50,7 +50,7 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         }
     }
 
-    companion object{
+    companion object {
         @Volatile
         private var INSTANCE: UserPreference? = null
 
@@ -61,7 +61,7 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         private val STATE_KEY = booleanPreferencesKey("state")
 
         fun getInstance(dataStore: DataStore<Preferences>): UserPreference {
-            return INSTANCE ?: synchronized(this){
+            return INSTANCE ?: synchronized(this) {
                 val instance = UserPreference(dataStore)
                 INSTANCE = instance
                 instance

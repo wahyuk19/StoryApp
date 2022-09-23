@@ -16,15 +16,6 @@ import retrofit2.Response
 
 class RemoteDataSource private constructor(private val apiService: ApiService) {
     private val gson = Gson()
-    companion object {
-        @Volatile
-        private var instance: RemoteDataSource? = null
-
-        fun getInstance(service: ApiService): RemoteDataSource =
-            instance ?: synchronized(this) {
-                instance ?: RemoteDataSource(service)
-            }
-    }
 
     fun postRegister(callback: RegisterCallback,registerRequest: RegisterRequest) {
         val client = apiService.postRegister(registerRequest)
@@ -128,6 +119,16 @@ class RemoteDataSource private constructor(private val apiService: ApiService) {
 
     interface StoriesCallback{
         fun getStories(stories: StoriesResponse)
+    }
+
+    companion object {
+        @Volatile
+        private var instance: RemoteDataSource? = null
+
+        fun getInstance(service: ApiService): RemoteDataSource =
+            instance ?: synchronized(this) {
+                instance ?: RemoteDataSource(service)
+            }
     }
 }
 

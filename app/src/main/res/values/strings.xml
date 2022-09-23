@@ -42,5 +42,11 @@
     <string name="uploading">Mengunggah</string>
     <string name="permission">Gagal mendapat permission</string>
     <string name="image_not_exist">Masukkan gambar terlebih dahulu</string>
+    <string name="image_capture">image_capture</string>
+    <string name="image_switch">image_switch</string>
+    <string name="failed_load_image">Gagal mengambil gambar.</string>
+    <string name="failed_load_camera">Gagal memunculkan kamera.</string>
+    <string name="preview_image">Preview image</string>
+    <string name="welcome_image">welcome image</string>
 
 </resources>

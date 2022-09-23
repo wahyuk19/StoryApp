@@ -33,7 +33,7 @@
                 android:textStyle="bold"
                 android:transitionName="name"
                 android:layout_marginHorizontal="8dp"
-                android:text="@string/created_by"
+                tools:text="@string/created_by"
                 app:layout_constraintTop_toBottomOf="@id/iv_detail_photo"/>
 
             <TextView

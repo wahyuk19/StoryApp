@@ -34,6 +34,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var dialog: Dialog
+    private val delayedTIme = 2000L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +48,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun setupAction() {
         binding.loginButton.setOnClickListener {
-            messageLoading(this, getString(R.string.loading), dialog)
+            messageLoading(getString(R.string.loading), dialog)
             val email = binding.edLoginEmail.text.toString()
             val password = binding.edLoginPassword.text.toString()
             val tripleDES = TripleDES(BuildConfig.KEY)
@@ -57,7 +58,7 @@ class LoginActivity : AppCompatActivity() {
             loginViewModel.login(login).observe(this) {
                 if (it.error == false) {
                     dialog.dismiss()
-                    messageSuccess(this, getString(R.string.success_login), dialog)
+                    messageSuccess(getString(R.string.success_login), dialog)
                     Handler(Looper.getMainLooper()).postDelayed({
                         val name = it.loginResult?.name.toString()
                         val token = it.loginResult?.token.toString()
@@ -69,13 +70,13 @@ class LoginActivity : AppCompatActivity() {
                         startActivity(intent)
                         finish()
                         dialog.dismiss()
-                    }, 2000)
+                    }, delayedTIme)
                 } else {
                     dialog.dismiss()
-                    messageFailed(this, it.message, dialog)
+                    messageFailed(it.message, dialog)
                     Handler(Looper.getMainLooper()).postDelayed({
                         dialog.dismiss()
-                    }, 2000)
+                    }, delayedTIme)
                 }
 
             }
@@ -120,7 +121,7 @@ class LoginActivity : AppCompatActivity() {
         dialog = Dialog(this)
     }
 
-    fun ByteArray.toHex(): String =
+    private fun ByteArray.toHex(): String =
         joinToString(separator = "") { eachByte -> "%02x".format(eachByte) }
 
 }

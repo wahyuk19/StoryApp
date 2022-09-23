@@ -39,16 +39,18 @@ class DetailActivity : AppCompatActivity() {
 
     private fun setupAction() {
         val story = intent.getParcelableExtra<ListStoryItem>("detail") as ListStoryItem
-        Glide.with(this)
-            .load(story.photoUrl)
-            .apply(
-                RequestOptions.placeholderOf(R.drawable.ic_loading).override(100, 150)
-                    .error(R.drawable.ic_error)
-            )
-            .into(binding.ivDetailPhoto)
-        binding.tvDetailName.text = getString(R.string.created_by, story.name)
-        binding.tvDetailDate.text = story.createdAt?.withDateFormat()
-        binding.tvDetailDescription.text = story.description
+        with(binding) {
+            Glide.with(this@DetailActivity)
+                .load(story.photoUrl)
+                .apply(
+                    RequestOptions.placeholderOf(R.drawable.ic_loading).override(100, 150)
+                        .error(R.drawable.ic_error)
+                )
+                .into(ivDetailPhoto)
+            tvDetailName.text = getString(R.string.created_by, story.name)
+            tvDetailDate.text = story.createdAt?.withDateFormat()
+            tvDetailDescription.text = story.description
+        }
     }
 
 }

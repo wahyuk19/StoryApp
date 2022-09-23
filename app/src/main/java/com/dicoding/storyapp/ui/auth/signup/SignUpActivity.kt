@@ -25,6 +25,7 @@ class SignUpActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignUpBinding
     private lateinit var signUpViewModel: SignUpViewModel
     private lateinit var dialog: Dialog
+    private val delayedTIme = 2000L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +39,7 @@ class SignUpActivity : AppCompatActivity() {
 
     private fun setupAction() {
         binding.signupButton.setOnClickListener {
-            messageLoading(this, getString(R.string.loading), dialog)
+            messageLoading(getString(R.string.loading), dialog)
             val name = binding.edRegisterName.text.toString()
             val email = binding.edRegisterEmail.text.toString()
             val password = binding.edRegisterPassword.text.toString()
@@ -49,16 +50,16 @@ class SignUpActivity : AppCompatActivity() {
             signUpViewModel.register(register).observe(this) {
                 if (it.error == false) {
                     dialog.dismiss()
-                    messageSuccess(this, getString(R.string.success_reg), dialog)
+                    messageSuccess(getString(R.string.success_reg), dialog)
                     Handler(Looper.getMainLooper()).postDelayed({
                         finish()
-                    }, 2000)
+                    }, delayedTIme)
                 } else {
                     dialog.dismiss()
-                    messageFailed(this, it.message, dialog)
+                    messageFailed(it.message, dialog)
                     Handler(Looper.getMainLooper()).postDelayed({
                         dialog.dismiss()
-                    }, 2000)
+                    }, delayedTIme)
                 }
             }
         }

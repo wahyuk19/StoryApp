@@ -104,21 +104,21 @@ fun rotateBitmap(bitmap: Bitmap, isBackCamera: Boolean = false): Bitmap {
     }
 }
 
-fun messageFailed(context: Context?, msg: String?, dlg: Dialog) {
+fun messageFailed(msg: String?, dlg: Dialog) {
     dlg.setContentView(R.layout.dialog_failed)
     val msgLoading = dlg.findViewById<TextView>(R.id.tv_failed)
     msgLoading.text = msg
     dlg.show()
 }
 
-fun messageLoading(context: Context?, msg: String?, dlg: Dialog) {
+fun messageLoading(msg: String?, dlg: Dialog) {
     dlg.setContentView(R.layout.dialog_loading)
     val msgLoading = dlg.findViewById<TextView>(R.id.tv_loading)
     msgLoading.text = msg
     dlg.show()
 }
 
-fun messageSuccess(context: Context?, msg: String?, dlg: Dialog) {
+fun messageSuccess(msg: String?, dlg: Dialog) {
     dlg.setContentView(R.layout.dialog_success)
     val msgLoading = dlg.findViewById<TextView>(R.id.tv_success)
     msgLoading.text = msg

@@ -15,7 +15,11 @@ interface IStoriesRepository {
 
     fun postLogin(loginRequest: LoginRequest): LiveData<LoginResponse>
 
-    fun postStory(token: String,imageMultipart: MultipartBody.Part,requestBody: RequestBody): LiveData<GlobalResponse>
+    fun postStory(
+        token: String,
+        imageMultipart: MultipartBody.Part,
+        requestBody: RequestBody
+    ): LiveData<GlobalResponse>
 
-    fun getStories(token: String,page: Int?,size: Int?,location: Int?): LiveData<StoriesResponse>
+    fun getStories(token: String, page: Int?, size: Int?, location: Int?): LiveData<StoriesResponse>
 }

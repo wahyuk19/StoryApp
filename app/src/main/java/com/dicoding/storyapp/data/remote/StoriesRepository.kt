@@ -11,16 +11,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
 class StoriesRepository private constructor(private val remoteDataSource: RemoteDataSource): IStoriesRepository {
-    companion object{
-        @Volatile
-        private var instance: StoriesRepository? = null
-
-        fun getInstance(remoteDataSource: RemoteDataSource): StoriesRepository =
-            instance ?: synchronized(this){
-                instance ?: StoriesRepository(remoteDataSource).apply { instance = this }
-            }
-    }
-
     override fun postRegister(registerRequest: RegisterRequest): LiveData<GlobalResponse> {
         val registerRes = MutableLiveData<GlobalResponse>()
         remoteDataSource.postRegister(callback = object : RemoteDataSource.RegisterCallback{
@@ -97,5 +87,13 @@ class StoriesRepository private constructor(private val remoteDataSource: Remote
         return storiesRes
     }
 
+    companion object{
+        @Volatile
+        private var instance: StoriesRepository? = null
 
+        fun getInstance(remoteDataSource: RemoteDataSource): StoriesRepository =
+            instance ?: synchronized(this){
+                instance ?: StoriesRepository(remoteDataSource).apply { instance = this }
+            }
+    }
 }

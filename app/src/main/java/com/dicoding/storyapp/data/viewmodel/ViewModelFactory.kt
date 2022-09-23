@@ -11,14 +11,15 @@ import com.dicoding.storyapp.ui.auth.signup.SignUpViewModel
 import com.dicoding.storyapp.ui.main.MainViewModel
 import com.dicoding.storyapp.ui.story.StoryViewModel
 
-class ViewModelFactory private constructor(private val mStoriesRepository: StoriesRepository) : ViewModelProvider.NewInstanceFactory() {
+class ViewModelFactory private constructor(private val mStoriesRepository: StoriesRepository) :
+    ViewModelProvider.NewInstanceFactory() {
 
-    companion object{
+    companion object {
         @Volatile
         private var instance: ViewModelFactory? = null
 
         fun getInstance(context: Context): ViewModelFactory =
-            instance ?: synchronized(this){
+            instance ?: synchronized(this) {
                 instance ?: ViewModelFactory(Injection.provideRepository(context)).apply {
                     instance = this
                 }
