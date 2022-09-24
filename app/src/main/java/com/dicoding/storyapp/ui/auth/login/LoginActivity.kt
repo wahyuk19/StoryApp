@@ -121,7 +121,4 @@ class LoginActivity : AppCompatActivity() {
         dialog = Dialog(this)
     }
 
-    private fun ByteArray.toHex(): String =
-        joinToString(separator = "") { eachByte -> "%02x".format(eachByte) }
-
 }

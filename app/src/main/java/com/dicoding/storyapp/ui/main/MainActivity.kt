@@ -17,6 +17,7 @@ import com.dicoding.storyapp.data.model.UserPreference
 import com.dicoding.storyapp.data.viewmodel.ViewModelFactory
 import com.dicoding.storyapp.databinding.ActivityMainBinding
 import com.dicoding.storyapp.ui.auth.welcome.WelcomeActivity
+import com.dicoding.storyapp.ui.maps.MapsActivity
 import com.dicoding.storyapp.ui.story.StoryActivity
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
@@ -67,6 +68,10 @@ class MainActivity : AppCompatActivity() {
     private fun setupAction() {
         binding.actionStory.setOnClickListener {
             startActivity(Intent(this, StoryActivity::class.java))
+        }
+
+        binding.actionMaps.setOnClickListener {
+            startActivity(Intent(this,MapsActivity::class.java))
         }
 
         binding.actionSetting.setOnClickListener {

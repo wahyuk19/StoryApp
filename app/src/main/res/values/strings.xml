@@ -48,5 +48,12 @@
     <string name="failed_load_camera">Gagal memunculkan kamera.</string>
     <string name="preview_image">Preview image</string>
     <string name="welcome_image">welcome image</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="story_location">Lokasi Cerita</string>
+    <string name="normal_type">Normal</string>
+    <string name="satellite_type">Satellite</string>
+    <string name="terrain_type">Terrain</string>
+    <string name="hybrid_type">Hybrid</string>
+    <string name="new_mark">Lokasi Baru</string>
 
 </resources>

@@ -104,6 +104,9 @@ fun rotateBitmap(bitmap: Bitmap, isBackCamera: Boolean = false): Bitmap {
     }
 }
 
+fun ByteArray.toHex(): String =
+    joinToString(separator = "") { eachByte -> "%02x".format(eachByte) }
+
 fun messageFailed(msg: String?, dlg: Dialog) {
     dlg.setContentView(R.layout.dialog_failed)
     val msgLoading = dlg.findViewById<TextView>(R.id.tv_failed)
