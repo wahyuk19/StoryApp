@@ -17,17 +17,18 @@ import retrofit2.Response
 class RemoteDataSource private constructor(private val apiService: ApiService) {
     private val gson = Gson()
 
-    fun postRegister(callback: RegisterCallback,registerRequest: RegisterRequest) {
+    fun postRegister(callback: RegisterCallback, registerRequest: RegisterRequest) {
         val client = apiService.postRegister(registerRequest)
         client.enqueue(object : Callback<GlobalResponse> {
             override fun onResponse(
                 call: Call<GlobalResponse>,
                 response: Response<GlobalResponse>
             ) {
-                if(response.code() == 201){
+                if (response.code() == 201) {
                     response.body()?.let { callback.postRegister(it) }
-                }else{
-                    val error = gson.fromJson(response.errorBody()?.string(),GlobalResponse::class.java)
+                } else {
+                    val error =
+                        gson.fromJson(response.errorBody()?.string(), GlobalResponse::class.java)
                     error.let { callback.postRegister(it) }
                 }
             }
@@ -38,7 +39,7 @@ class RemoteDataSource private constructor(private val apiService: ApiService) {
         })
     }
 
-    fun postLogin(callback: LoginCallback,loginRequest: LoginRequest){
+    fun postLogin(callback: LoginCallback, loginRequest: LoginRequest) {
         val client = apiService.postLogin(loginRequest)
 
         client.enqueue(object : Callback<LoginResponse> {
@@ -46,10 +47,11 @@ class RemoteDataSource private constructor(private val apiService: ApiService) {
                 call: Call<LoginResponse>,
                 response: Response<LoginResponse>
             ) {
-                if(response.code() == 200){
+                if (response.code() == 200) {
                     response.body()?.let { callback.postLogin(it) }
-                }else{
-                    val error = gson.fromJson(response.errorBody()?.string(),LoginResponse::class.java)
+                } else {
+                    val error =
+                        gson.fromJson(response.errorBody()?.string(), LoginResponse::class.java)
                     error.let { callback.postLogin(it) }
                 }
             }
@@ -60,18 +62,26 @@ class RemoteDataSource private constructor(private val apiService: ApiService) {
         })
     }
 
-    fun postStory(callback: StoryCallback,token: String,imageMultipart: MultipartBody.Part,requestBody: RequestBody) {
-        val client = apiService.postStory(token, imageMultipart,requestBody)
+    fun postStory(
+        callback: StoryCallback,
+        token: String,
+        imageMultipart: MultipartBody.Part,
+        description: RequestBody,
+        lat: Float?,
+        lon: Float?
+    ) {
+        val client = apiService.postStory(token, imageMultipart, description, lat, lon)
 
         client.enqueue(object : Callback<GlobalResponse> {
             override fun onResponse(
                 call: Call<GlobalResponse>,
                 response: Response<GlobalResponse>
             ) {
-                if(response.code() == 201){
+                if (response.code() == 201) {
                     response.body()?.let { callback.postStory(it) }
-                }else{
-                    val error = gson.fromJson(response.errorBody()?.string(),GlobalResponse::class.java)
+                } else {
+                    val error =
+                        gson.fromJson(response.errorBody()?.string(), GlobalResponse::class.java)
                     error.let { callback.postStory(it) }
                 }
             }
@@ -82,43 +92,44 @@ class RemoteDataSource private constructor(private val apiService: ApiService) {
         })
     }
 
-    fun getStories(callback: StoriesCallback, token: String, page: Int?, size: Int?, location: Int?){
-        val client = apiService.getStories(token, page, size, location)
+    fun getStoriesByMap(callback: StoryMapCallback, token: String, location: Int) {
+        val client = apiService.getStoriesByMap(token, location)
 
         client.enqueue(object : Callback<StoriesResponse> {
             override fun onResponse(
                 call: Call<StoriesResponse>,
                 response: Response<StoriesResponse>
             ) {
-                if(response.code() == 200){
-                    response.body()?.let { callback.getStories(it) }
-                }else{
-                    val error = gson.fromJson(response.errorBody()?.string(),StoriesResponse::class.java)
-                    error.let { callback.getStories(it) }
+                if (response.code() == 200) {
+                    response.body()?.let { callback.getStoriesByMap(it) }
+                } else {
+                    val error =
+                        gson.fromJson(response.errorBody()?.string(), StoriesResponse::class.java)
+                    error.let { callback.getStoriesByMap(it) }
                 }
             }
 
             override fun onFailure(call: Call<StoriesResponse>, t: Throwable) {
                 Log.e("RemoteDataSource", t.message.toString())
             }
-        })
 
+        })
     }
 
-    interface RegisterCallback{
+    interface RegisterCallback {
         fun postRegister(register: GlobalResponse)
     }
 
-    interface LoginCallback{
+    interface LoginCallback {
         fun postLogin(login: LoginResponse)
     }
 
-    interface StoryCallback{
+    interface StoryCallback {
         fun postStory(story: GlobalResponse)
     }
 
-    interface StoriesCallback{
-        fun getStories(stories: StoriesResponse)
+    interface StoryMapCallback {
+        fun getStoriesByMap(story: StoriesResponse)
     }
 
     companion object {

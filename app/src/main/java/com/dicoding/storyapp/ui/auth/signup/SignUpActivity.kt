@@ -84,7 +84,7 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        val factory = ViewModelFactory.getInstance(this)
+        val factory = ViewModelFactory.getInstance()
         signUpViewModel = ViewModelProvider(
             this, factory
         )[SignUpViewModel::class.java]

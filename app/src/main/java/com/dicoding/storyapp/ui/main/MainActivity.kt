@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        val factory = ViewModelFactory.getInstance(this)
+        val factory = ViewModelFactory.getInstance()
         mainViewModel = ViewModelProvider(
             this, factory
         )[MainViewModel::class.java]

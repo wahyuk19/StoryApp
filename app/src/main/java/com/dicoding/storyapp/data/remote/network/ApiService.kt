@@ -26,14 +26,21 @@ interface ApiService {
     fun postStory(
         @Header("authorization") token: String,
         @Part file: MultipartBody.Part,
-        @Part("description") description: RequestBody
+        @Part("description") description: RequestBody,
+        @Part("lat") lat: Float?,
+        @Part("lon") lon: Float?
     ): Call<GlobalResponse>
 
     @GET("stories")
-    fun getStories(
+    fun getStoriesByMap(
+        @Header("authorization") token: String,
+        @Query("location") location: Int?
+    ): Call<StoriesResponse>
+
+    @GET("stories")
+    suspend fun getPagedStories(
         @Header("authorization") token: String,
         @Query("page") page: Int?,
         @Query("size") size: Int?,
-        @Query("location") location: Int?
-    ): Call<StoriesResponse>
+    ): StoriesResponse
 }

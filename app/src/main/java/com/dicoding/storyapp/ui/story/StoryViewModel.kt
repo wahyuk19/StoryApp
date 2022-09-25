@@ -3,9 +3,13 @@ package com.dicoding.storyapp.ui.story
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.dicoding.storyapp.data.model.UserModel
 import com.dicoding.storyapp.data.model.UserPreference
 import com.dicoding.storyapp.data.remote.StoriesRepository
+import com.dicoding.storyapp.data.remote.response.ListStoryItem
 import com.dicoding.storyapp.data.remote.response.StoriesResponse
 
 class StoryViewModel(private val storiesRepository: StoriesRepository) : ViewModel() {
@@ -14,9 +18,7 @@ class StoryViewModel(private val storiesRepository: StoriesRepository) : ViewMod
     }
 
     fun getStories(
-        token: String,
-        page: Int?,
-        size: Int?,
-        location: Int?
-    ): LiveData<StoriesResponse> = storiesRepository.getStories(token, page, size, location)
+        token: String
+    ): LiveData<PagingData<ListStoryItem>> = storiesRepository.getStories(token).cachedIn(viewModelScope)
+
 }

@@ -55,5 +55,7 @@
     <string name="terrain_type">Terrain</string>
     <string name="hybrid_type">Hybrid</string>
     <string name="new_mark">Lokasi Baru</string>
+    <string name="load_failed_story">Gagal memuat</string>
+    <string name="load_failed_map">Gagal memuat map</string>
 
 </resources>

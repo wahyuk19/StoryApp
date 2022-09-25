@@ -7,11 +7,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.location.Location
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.Toast
@@ -29,6 +31,11 @@ import com.dicoding.storyapp.data.viewmodel.ViewModelFactory
 import com.dicoding.storyapp.databinding.ActivityAddStoryBinding
 import com.dicoding.storyapp.ui.camera.CameraActivity
 import com.dicoding.storyapp.ui.utils.*
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.LatLng
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -39,12 +46,17 @@ import java.io.File
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
-class AddStoryActivity : AppCompatActivity() {
+class AddStoryActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityAddStoryBinding
     private lateinit var addStoryViewModel: AddStoryViewModel
     private var getFile: File? = null
     private lateinit var dialog: Dialog
     private val delayedTIme = 2000L
+    private lateinit var mMap: GoogleMap
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var latLng : LatLng
+    private var lat: Float? = null
+    private var lon: Float? = null
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -81,9 +93,61 @@ class AddStoryActivity : AppCompatActivity() {
             )
         }
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
         setupView()
         setupViewModel()
         setupAction()
+        getMyLastLocation()
+    }
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            when {
+                permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {
+                    // Precise location access granted.
+                    getMyLastLocation()
+                }
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {
+                    // Only approximate location access granted.
+                    getMyLastLocation()
+                }
+                else -> {
+                    // No location access granted.
+                }
+            }
+        }
+    private fun checkPermission(permission: String): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+    private fun getMyLastLocation() {
+        if     (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION) &&
+            checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+        ){
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    latLng = LatLng(location.latitude,location.longitude)
+                } else {
+                    Toast.makeText(
+                        this@AddStoryActivity,
+                        "Location is not found. Try Again",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        } else {
+            requestPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
     }
 
     private fun setupView() {
@@ -102,7 +166,7 @@ class AddStoryActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        val factory = ViewModelFactory.getInstance(this)
+        val factory = ViewModelFactory.getInstance()
         addStoryViewModel = ViewModelProvider(
             this, factory
         )[AddStoryViewModel::class.java]
@@ -130,6 +194,8 @@ class AddStoryActivity : AppCompatActivity() {
             val desc = binding.edAddDescription.text.toString()
             val description: RequestBody
 
+
+
             if (desc.isNotEmpty()) {
                 description = binding.edAddDescription.text.toString()
                     .toRequestBody("text/plain".toMediaType())
@@ -145,21 +211,23 @@ class AddStoryActivity : AppCompatActivity() {
                         addStoryViewModel.addStory(
                             "Bearer ${user.token}",
                             imageMultipart,
-                            description
+                            description,
+                            latLng.latitude.toFloat(),
+                            latLng.longitude.toFloat()
                         ).observe(this) {
                             if (it.error == false) {
-                                dialog.dismiss()
                                 messageSuccess(getString(R.string.success), dialog)
                                 Handler(Looper.getMainLooper()).postDelayed({
                                     setResult(Activity.RESULT_OK)
+                                    dialog.dismiss()
                                     finish()
                                 }, delayedTIme)
 
                             } else {
-                                dialog.dismiss()
                                 messageFailed(it.message, dialog)
                                 Handler(Looper.getMainLooper()).postDelayed({
-                                    setResult(Activity.RESULT_OK)
+                                    setResult(Activity.RESULT_CANCELED)
+                                    dialog.dismiss()
                                     finish()
                                 }, delayedTIme)
                             }
@@ -222,10 +290,17 @@ class AddStoryActivity : AppCompatActivity() {
         }
     }
 
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
+    }
+
+
     companion object {
         const val CAMERA_X_RESULT = 200
 
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         private const val REQUEST_CODE_PERMISSIONS = 10
     }
+
+
 }

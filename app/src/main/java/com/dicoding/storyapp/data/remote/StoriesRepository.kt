@@ -2,15 +2,22 @@ package com.dicoding.storyapp.data.remote
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.liveData
+import com.dicoding.storyapp.data.StoryPagingSource
 import com.dicoding.storyapp.data.model.LoginRequest
 import com.dicoding.storyapp.data.model.RegisterRequest
+import com.dicoding.storyapp.data.remote.network.ApiService
 import com.dicoding.storyapp.data.remote.response.GlobalResponse
+import com.dicoding.storyapp.data.remote.response.ListStoryItem
 import com.dicoding.storyapp.data.remote.response.LoginResponse
 import com.dicoding.storyapp.data.remote.response.StoriesResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
-class StoriesRepository private constructor(private val remoteDataSource: RemoteDataSource): IStoriesRepository {
+class StoriesRepository private constructor(private val remoteDataSource: RemoteDataSource,private val apiService: ApiService): IStoriesRepository {
     override fun postRegister(registerRequest: RegisterRequest): LiveData<GlobalResponse> {
         val registerRes = MutableLiveData<GlobalResponse>()
         remoteDataSource.postRegister(callback = object : RemoteDataSource.RegisterCallback{
@@ -48,7 +55,9 @@ class StoriesRepository private constructor(private val remoteDataSource: Remote
     override fun postStory(
         token: String,
         imageMultipart: MultipartBody.Part,
-        requestBody: RequestBody
+        description: RequestBody,
+        lat: Float?,
+        lon: Float?
     ): LiveData<GlobalResponse> {
         val storyRes = MutableLiveData<GlobalResponse>()
         remoteDataSource.postStory(callback = object : RemoteDataSource.StoryCallback{
@@ -61,39 +70,47 @@ class StoriesRepository private constructor(private val remoteDataSource: Remote
                 }
                 storyRes.postValue(storyData)
             }
-        },token, imageMultipart, requestBody)
+        },token, imageMultipart, description,lat,lon)
         return storyRes
     }
 
-    override fun getStories(
-        token: String,
-        page: Int?,
-        size: Int?,
-        location: Int?
-    ): LiveData<StoriesResponse> {
+    override fun getStoriesByMap(token: String, location: Int): LiveData<StoriesResponse> {
         val storiesRes = MutableLiveData<StoriesResponse>()
-        remoteDataSource.getStories(callback = object : RemoteDataSource.StoriesCallback{
-            override fun getStories(stories: StoriesResponse) {
-                val storiesData = stories.let {
+        remoteDataSource.getStoriesByMap(callback = object : RemoteDataSource.StoryMapCallback{
+            override fun getStoriesByMap(story: StoriesResponse) {
+                val stories = story.let {
                     StoriesResponse(
                         it.listStory,
                         it.error,
                         it.message
                     )
                 }
-                storiesRes.postValue(storiesData)
+                storiesRes.postValue(stories)
             }
-        },token, page, size, location)
+        },token,location)
         return storiesRes
+    }
+
+    override fun getStories(
+        token: String
+    ): LiveData<PagingData<ListStoryItem>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 5
+            ),
+            pagingSourceFactory = {
+                StoryPagingSource(apiService,token)
+            }
+        ).liveData
     }
 
     companion object{
         @Volatile
         private var instance: StoriesRepository? = null
 
-        fun getInstance(remoteDataSource: RemoteDataSource): StoriesRepository =
+        fun getInstance(remoteDataSource: RemoteDataSource,apiService: ApiService): StoriesRepository =
             instance ?: synchronized(this){
-                instance ?: StoriesRepository(remoteDataSource).apply { instance = this }
+                instance ?: StoriesRepository(remoteDataSource,apiService).apply { instance = this }
             }
     }
 }

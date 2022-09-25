@@ -15,8 +15,6 @@ class MapsViewModel(private val storiesRepository: StoriesRepository): ViewModel
 
     fun getStories(
         token: String,
-        page: Int?,
-        size: Int?,
         location: Int
-    ): LiveData<StoriesResponse> = storiesRepository.getStories(token, page, size, location)
+    ): LiveData<StoriesResponse> = storiesRepository.getStoriesByMap(token,location)
 }

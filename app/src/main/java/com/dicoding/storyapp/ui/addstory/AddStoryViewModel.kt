@@ -18,6 +18,8 @@ class AddStoryViewModel(private val mStoriesRepository: StoriesRepository) : Vie
     fun addStory(
         token: String,
         imageMultipart: MultipartBody.Part,
-        requestBody: RequestBody
-    ): LiveData<GlobalResponse> = mStoriesRepository.postStory(token, imageMultipart, requestBody)
+        description: RequestBody,
+        lat: Float?,
+        lon: Float?
+    ): LiveData<GlobalResponse> = mStoriesRepository.postStory(token, imageMultipart, description,lat,lon)
 }

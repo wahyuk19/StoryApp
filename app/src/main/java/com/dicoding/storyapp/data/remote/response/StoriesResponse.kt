@@ -2,18 +2,18 @@ package com.dicoding.storyapp.data.remote.response
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 data class StoriesResponse(
 
     @field:SerializedName("listStory")
-    val listStory: List<ListStoryItem>? = null,
+    val listStory: List<ListStoryItem>,
 
     @field:SerializedName("error")
-    val error: Boolean? = null,
+    val error: Boolean?,
 
     @field:SerializedName("message")
-    val message: String? = null
+    val message: String?
 )
 
 @Parcelize

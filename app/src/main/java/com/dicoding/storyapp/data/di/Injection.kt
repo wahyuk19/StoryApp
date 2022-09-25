@@ -6,8 +6,9 @@ import com.dicoding.storyapp.data.remote.StoriesRepository
 import com.dicoding.storyapp.data.remote.network.ApiConfig
 
 object Injection {
-    fun provideRepository(context: Context): StoriesRepository {
+    fun provideRepository(): StoriesRepository {
         val remoteDataSource = RemoteDataSource.getInstance(ApiConfig.provideApiService())
-        return StoriesRepository.getInstance(remoteDataSource)
+        val apiService = ApiConfig.provideApiService()
+        return StoriesRepository.getInstance(remoteDataSource,apiService)
     }
 }

@@ -55,5 +55,7 @@
     <string name="satellite_type">Satellite</string>
     <string name="terrain_type">Terrain</string>
     <string name="hybrid_type">Hybrid</string>
-
+    <string name="new_mark">New location</string>
+    <string name="load_failed_story">Load failed</string>
+    <string name="load_failed_map">Map load failed</string>
 </resources>

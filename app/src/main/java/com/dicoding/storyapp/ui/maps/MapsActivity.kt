@@ -1,7 +1,9 @@
 package com.dicoding.storyapp.ui.maps
 
 import android.app.Dialog
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -68,7 +70,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun setupViewModel() {
-        val factory = ViewModelFactory.getInstance(this)
+        val factory = ViewModelFactory.getInstance()
         mapsViewModel = ViewModelProvider(
             this, factory
         )[MapsViewModel::class.java]
@@ -98,6 +100,20 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     .snippet("Lat: ${latLng.latitude},Long: ${latLng.longitude}")
                     .icon(vectorToBitmap(R.drawable.ic_baseline_location_on_24, Color.parseColor("#515151")))
             )
+        }
+
+        setMapStyle()
+    }
+
+    private fun setMapStyle() {
+        try {
+            val success =
+                mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
+            if (!success) {
+                Log.e(TAG, "Style parsing failed.")
+            }
+        } catch (exception: Resources.NotFoundException) {
+            Log.e(TAG, "Can't find style. Error: ", exception)
         }
     }
 
@@ -131,11 +147,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun getStories() {
-        mapsViewModel.getStories("Bearer $token", page, size, location)
+        mapsViewModel.getStories("Bearer $token",location)
             .observe(this) { story ->
                 if (story.error == false) {
                     dialog.dismiss()
-                    story.listStory?.forEach { item ->
+                    story.listStory.forEach { item ->
                         with(item){
                             val latLng = LatLng(lat, lon)
                             mMap.addMarker(
