@@ -1,11 +1,11 @@
 package com.dicoding.storyapp.data.model
 
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 
 class UserPreference private constructor(private val dataStore: DataStore<Preferences>) {
@@ -22,22 +22,13 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         }
     }
 
-    suspend fun saveUser(user: UserModel) {
-        dataStore.edit { preferences ->
-            preferences[TOKEN_KEY] = user.token
-            preferences[NAME_KEY] = user.name
-            preferences[EMAIL_KEY] = user.email
-            preferences[PASSWORD_KEY] = user.password
-            preferences[STATE_KEY] = user.isLogin
-        }
-    }
-
-    suspend fun login(user: UserModel) {
+    suspend fun login(user: UserModel):Boolean {
         dataStore.edit { preferences ->
             preferences[TOKEN_KEY] = user.token
             preferences[NAME_KEY] = user.name
             preferences[STATE_KEY] = true
         }
+        return true
     }
 
     suspend fun logout() {
@@ -48,6 +39,16 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
             preferences[PASSWORD_KEY] = ""
             preferences[STATE_KEY] = false
         }
+    }
+
+    fun isLogin():LiveData<Boolean>{
+        val dataUser = getUser()
+        return dataUser.map {
+            it.isLogin
+        }.asLiveData()
+//        return dataStore.data.map { preferences ->
+//            preferences[STATE_KEY] ?: false
+//        }.asLiveData()
     }
 
     companion object {

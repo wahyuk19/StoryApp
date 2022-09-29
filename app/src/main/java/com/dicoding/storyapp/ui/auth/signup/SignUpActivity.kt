@@ -1,6 +1,7 @@
 package com.dicoding.storyapp.ui.auth.signup
 
 import android.app.Dialog
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -10,13 +11,19 @@ import android.view.WindowManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import com.dicoding.storyapp.BuildConfig
 import com.dicoding.storyapp.R
 import com.dicoding.storyapp.data.model.RegisterRequest
+import com.dicoding.storyapp.data.model.UserPreference
 import com.dicoding.storyapp.data.viewmodel.ViewModelFactory
 import com.dicoding.storyapp.databinding.ActivitySignUpBinding
 import com.dicoding.storyapp.ui.utils.*
+
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 class SignUpActivity : AppCompatActivity() {
     private var nameStatus = false
@@ -84,7 +91,7 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        val factory = ViewModelFactory.getInstance()
+        val factory = ViewModelFactory.getInstance(UserPreference.getInstance(dataStore))
         signUpViewModel = ViewModelProvider(
             this, factory
         )[SignUpViewModel::class.java]

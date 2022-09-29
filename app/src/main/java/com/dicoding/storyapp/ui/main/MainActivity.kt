@@ -50,12 +50,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        val factory = ViewModelFactory.getInstance()
+        val factory = ViewModelFactory.getInstance(UserPreference.getInstance(dataStore))
         mainViewModel = ViewModelProvider(
             this, factory
         )[MainViewModel::class.java]
 
-        mainViewModel.getUser(UserPreference.getInstance(dataStore)).observe(this) { user ->
+        mainViewModel.getUser().observe(this) { user ->
             if (user.isLogin) {
                 binding.nameTextView.text = getString(R.string.greeting, user.name)
             } else {
@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.actionLogout.setOnClickListener {
-            mainViewModel.logout(UserPreference.getInstance(dataStore))
+            mainViewModel.logout()
         }
     }
 }

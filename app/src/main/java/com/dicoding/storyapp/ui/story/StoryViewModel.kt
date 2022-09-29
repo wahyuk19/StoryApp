@@ -12,8 +12,8 @@ import com.dicoding.storyapp.data.remote.StoriesRepository
 import com.dicoding.storyapp.data.remote.response.ListStoryItem
 import com.dicoding.storyapp.data.remote.response.StoriesResponse
 
-class StoryViewModel(private val storiesRepository: StoriesRepository) : ViewModel() {
-    fun getUser(pref: UserPreference): LiveData<UserModel> {
+class StoryViewModel(private val storiesRepository: StoriesRepository,private val pref: UserPreference) : ViewModel() {
+    fun getUser(): LiveData<UserModel> {
         return pref.getUser().asLiveData()
     }
 

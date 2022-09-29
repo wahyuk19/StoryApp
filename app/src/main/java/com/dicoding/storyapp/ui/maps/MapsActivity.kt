@@ -70,7 +70,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun setupViewModel() {
-        val factory = ViewModelFactory.getInstance()
+        val factory = ViewModelFactory.getInstance(UserPreference.getInstance(dataStore))
         mapsViewModel = ViewModelProvider(
             this, factory
         )[MapsViewModel::class.java]
@@ -86,7 +86,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.uiSettings.isCompassEnabled = true
         mMap.uiSettings.isMapToolbarEnabled = true
 
-        mapsViewModel.getUser(UserPreference.getInstance(dataStore)).observe(this) { user ->
+        mapsViewModel.getUser().observe(this) { user ->
             messageLoading(getString(R.string.loading), dialog)
             token = user.token
             getStories()

@@ -8,12 +8,12 @@ import com.dicoding.storyapp.data.model.UserModel
 import com.dicoding.storyapp.data.model.UserPreference
 import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel() {
-    fun getUser(pref: UserPreference): LiveData<UserModel> {
+class MainViewModel(private val pref: UserPreference) : ViewModel() {
+    fun getUser(): LiveData<UserModel> {
         return pref.getUser().asLiveData()
     }
 
-    fun logout(pref: UserPreference) {
+    fun logout() {
         viewModelScope.launch {
             pref.logout()
         }

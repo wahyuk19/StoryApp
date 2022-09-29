@@ -166,7 +166,7 @@ class AddStoryActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun setupViewModel() {
-        val factory = ViewModelFactory.getInstance()
+        val factory = ViewModelFactory.getInstance(UserPreference.getInstance(dataStore))
         addStoryViewModel = ViewModelProvider(
             this, factory
         )[AddStoryViewModel::class.java]
@@ -206,7 +206,7 @@ class AddStoryActivity : AppCompatActivity(), OnMapReadyCallback {
                     requestImageFile
                 )
 
-                addStoryViewModel.getUser(UserPreference.getInstance(dataStore))
+                addStoryViewModel.getUser()
                     .observe(this) { user ->
                         addStoryViewModel.addStory(
                             "Bearer ${user.token}",

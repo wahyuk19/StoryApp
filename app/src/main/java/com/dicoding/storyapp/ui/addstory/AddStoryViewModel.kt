@@ -10,8 +10,8 @@ import com.dicoding.storyapp.data.remote.response.GlobalResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
-class AddStoryViewModel(private val mStoriesRepository: StoriesRepository) : ViewModel() {
-    fun getUser(pref: UserPreference): LiveData<UserModel> {
+class AddStoryViewModel(private val mStoriesRepository: StoriesRepository,private val pref: UserPreference) : ViewModel() {
+    fun getUser(): LiveData<UserModel> {
         return pref.getUser().asLiveData()
     }
 

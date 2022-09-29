@@ -63,7 +63,7 @@ class LoginActivity : AppCompatActivity() {
                         val name = it.loginResult?.name.toString()
                         val token = it.loginResult?.token.toString()
                         val session = UserModel(token, name, "", "", false)
-                        loginViewModel.saveSession(UserPreference.getInstance(dataStore), session)
+                        loginViewModel.saveSession(session)
                         val intent = Intent(this, MainActivity::class.java)
                         intent.flags =
                             Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
@@ -99,7 +99,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        val factory = ViewModelFactory.getInstance()
+        val factory = ViewModelFactory.getInstance(UserPreference.getInstance(dataStore))
         loginViewModel = ViewModelProvider(
             this, factory
         )[LoginViewModel::class.java]

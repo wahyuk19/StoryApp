@@ -71,7 +71,7 @@ class StoryActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        val factory = ViewModelFactory.getInstance()
+        val factory = ViewModelFactory.getInstance(UserPreference.getInstance(dataStore))
         storyViewModel = ViewModelProvider(
             this, factory
         )[StoryViewModel::class.java]
@@ -79,7 +79,7 @@ class StoryActivity : AppCompatActivity() {
     }
 
     private fun setupAction() {
-        storyViewModel.getUser(UserPreference.getInstance(dataStore)).observe(this) { user ->
+        storyViewModel.getUser().observe(this) { user ->
             messageLoading(getString(R.string.loading), dialog)
             token = user.token
             storyViewModel.getStories("Bearer $token")
