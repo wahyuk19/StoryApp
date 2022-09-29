@@ -1,0 +1,15 @@
+Skenario pengujian
+
+MainViewModelTest
+- memastikan cek user mengembalikan data
+- memastikan data tidak null
+- memastikan saat status login false session akan ditutup
+
+LoginViewModelTest
+- memastikan session sudah di save
+- memastikan login mengembalikan data
+- memastikan data login tidak null
+
+SignupViewModelTest
+- memastikan register mengembalikan data
+- memastikan data register tidak null
