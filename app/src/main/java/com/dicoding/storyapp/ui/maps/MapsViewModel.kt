@@ -8,7 +8,10 @@ import com.dicoding.storyapp.data.model.UserPreference
 import com.dicoding.storyapp.data.remote.StoriesRepository
 import com.dicoding.storyapp.data.remote.response.StoriesResponse
 
-class MapsViewModel(private val storiesRepository: StoriesRepository,private val pref: UserPreference): ViewModel() {
+class MapsViewModel(
+    private val storiesRepository: StoriesRepository,
+    private val pref: UserPreference
+) : ViewModel() {
     fun getUser(): LiveData<UserModel> {
         return pref.getUser().asLiveData()
     }
@@ -16,5 +19,5 @@ class MapsViewModel(private val storiesRepository: StoriesRepository,private val
     fun getStories(
         token: String,
         location: Int
-    ): LiveData<StoriesResponse> = storiesRepository.getStoriesByMap(token,location)
+    ): LiveData<StoriesResponse> = storiesRepository.getStoriesByMap(token, location)
 }

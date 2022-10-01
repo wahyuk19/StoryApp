@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.dicoding.storyapp.data.model.RegisterRequest
 import com.dicoding.storyapp.data.remote.StoriesRepository
 import com.dicoding.storyapp.data.remote.response.GlobalResponse
-import com.dicoding.storyapp.getOrAwaitValue
+import com.dicoding.storyapp.utils.getOrAwaitValue
 import com.dicoding.storyapp.utils.DataDummy
 import com.dicoding.storyapp.utils.DummyGlobal
 import com.dicoding.storyapp.utils.MainDispatcherRule
@@ -21,7 +21,7 @@ import org.mockito.junit.MockitoJUnitRunner
 
 @ExperimentalCoroutinesApi
 @RunWith(MockitoJUnitRunner::class)
-class SignUpViewModelTest{
+class SignUpViewModelTest {
 
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
@@ -33,7 +33,7 @@ class SignUpViewModelTest{
     private val dummyGlobal = DummyGlobal.generateDummyGlobal()
 
     @Before
-    fun setup(){
+    fun setup() {
         signUpViewModel = SignUpViewModel(storiesRepository)
     }
 
@@ -44,7 +44,7 @@ class SignUpViewModelTest{
     fun `when send register request and return data`() {
         val expectedData = MutableLiveData<GlobalResponse>()
         expectedData.value = dummyGlobal
-        val register = RegisterRequest(dummyMain.name,dummyMain.email,dummyMain.password)
+        val register = RegisterRequest(dummyMain.name, dummyMain.email, dummyMain.password)
         Mockito.`when`(storiesRepository.postRegister(register)).thenReturn(expectedData)
 
         val actualRegister = signUpViewModel.register(register).getOrAwaitValue()

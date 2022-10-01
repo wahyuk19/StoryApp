@@ -1,4 +1,4 @@
-package com.dicoding.storyapp
+package com.dicoding.storyapp.utils
 
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData

@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.actionMaps.setOnClickListener {
-            startActivity(Intent(this,MapsActivity::class.java))
+            startActivity(Intent(this, MapsActivity::class.java))
         }
 
         binding.actionSetting.setOnClickListener {

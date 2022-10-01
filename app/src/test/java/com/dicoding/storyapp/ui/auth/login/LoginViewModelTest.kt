@@ -6,9 +6,8 @@ import com.dicoding.storyapp.data.model.LoginRequest
 import com.dicoding.storyapp.data.model.UserModel
 import com.dicoding.storyapp.data.model.UserPreference
 import com.dicoding.storyapp.data.remote.StoriesRepository
-import com.dicoding.storyapp.data.remote.response.GlobalResponse
 import com.dicoding.storyapp.data.remote.response.LoginResponse
-import com.dicoding.storyapp.getOrAwaitValue
+import com.dicoding.storyapp.utils.getOrAwaitValue
 import com.dicoding.storyapp.utils.DataDummy
 import com.dicoding.storyapp.utils.DummyLogin
 import com.dicoding.storyapp.utils.MainDispatcherRule
@@ -20,7 +19,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 
@@ -39,9 +37,9 @@ class LoginViewModelTest {
     private val dummyLogin = DummyLogin.generateDummyLogin()
 
     @Before
-    fun setup(){
+    fun setup() {
         userPreference = mock(UserPreference::class.java)
-        loginViewModel = LoginViewModel(storiesRepository,userPreference)
+        loginViewModel = LoginViewModel(storiesRepository, userPreference)
     }
 
     @get:Rule
@@ -59,7 +57,7 @@ class LoginViewModelTest {
     fun `when send login request and return data`() {
         val expectedData = MutableLiveData<LoginResponse>()
         expectedData.value = dummyLogin
-        val login = LoginRequest(dummyMain.email,dummyMain.password)
+        val login = LoginRequest(dummyMain.email, dummyMain.password)
         `when`(storiesRepository.postLogin(login)).thenReturn(expectedData)
 
         val actualLogin = loginViewModel.login(login).getOrAwaitValue()

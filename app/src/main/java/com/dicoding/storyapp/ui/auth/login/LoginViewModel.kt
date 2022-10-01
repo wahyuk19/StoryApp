@@ -10,7 +10,10 @@ import com.dicoding.storyapp.data.remote.StoriesRepository
 import com.dicoding.storyapp.data.remote.response.LoginResponse
 import kotlinx.coroutines.launch
 
-class LoginViewModel(private val storiesRepository: StoriesRepository,private val pref: UserPreference) : ViewModel() {
+class LoginViewModel(
+    private val storiesRepository: StoriesRepository,
+    private val pref: UserPreference
+) : ViewModel() {
 
     fun saveSession(userModel: UserModel) {
         viewModelScope.launch {

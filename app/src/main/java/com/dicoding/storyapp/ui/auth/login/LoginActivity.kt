@@ -59,11 +59,11 @@ class LoginActivity : AppCompatActivity() {
                 if (it.error == false) {
                     dialog.dismiss()
                     messageSuccess(getString(R.string.success_login), dialog)
+                    val name = it.loginResult?.name.toString()
+                    val token = it.loginResult?.token.toString()
+                    val session = UserModel(token, name, "", "", false)
+                    loginViewModel.saveSession(session)
                     Handler(Looper.getMainLooper()).postDelayed({
-                        val name = it.loginResult?.name.toString()
-                        val token = it.loginResult?.token.toString()
-                        val session = UserModel(token, name, "", "", false)
-                        loginViewModel.saveSession(session)
                         val intent = Intent(this, MainActivity::class.java)
                         intent.flags =
                             Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK

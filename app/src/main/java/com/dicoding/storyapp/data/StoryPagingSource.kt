@@ -5,7 +5,8 @@ import androidx.paging.PagingState
 import com.dicoding.storyapp.data.remote.network.ApiService
 import com.dicoding.storyapp.data.remote.response.ListStoryItem
 
-class StoryPagingSource(private val apiService: ApiService, val token:String) : PagingSource<Int, ListStoryItem>() {
+class StoryPagingSource(private val apiService: ApiService, val token: String) :
+    PagingSource<Int, ListStoryItem>() {
     override fun getRefreshKey(state: PagingState<Int, ListStoryItem>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             val anchorPage = state.closestPageToPosition(anchorPosition)
@@ -16,20 +17,20 @@ class StoryPagingSource(private val apiService: ApiService, val token:String) : 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ListStoryItem> {
         return try {
             val position = params.key ?: INITIAL_PAGE_INDEX
-            val responseData = apiService.getPagedStories(token,position,params.loadSize)
+            val responseData = apiService.getPagedStories(token, position, params.loadSize)
 
             LoadResult.Page(
                 data = responseData.listStory,
-                prevKey = if(position == INITIAL_PAGE_INDEX) null else position - 1,
-                nextKey = if(responseData.listStory.isEmpty()) null else position + 1
+                prevKey = if (position == INITIAL_PAGE_INDEX) null else position - 1,
+                nextKey = if (responseData.listStory.isEmpty()) null else position + 1
             )
 
-        }catch (e: Exception){
+        } catch (e: Exception) {
             return LoadResult.Error(e)
         }
     }
 
-    private companion object{
+    private companion object {
         const val INITIAL_PAGE_INDEX = 1
     }
 }

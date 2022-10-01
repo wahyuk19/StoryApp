@@ -58,4 +58,6 @@
     <string name="new_mark">New location</string>
     <string name="load_failed_story">Load failed</string>
     <string name="load_failed_map">Map load failed</string>
+    <string name="check_location">Please turn on location</string>
+
 </resources>

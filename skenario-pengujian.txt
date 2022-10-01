@@ -13,3 +13,29 @@ LoginViewModelTest
 SignupViewModelTest
 - memastikan register mengembalikan data
 - memastikan data register tidak null
+
+StoryViewModelTest
+- memastikan data tidak null
+- memastikan jumlah data sesuai dengan yang diharapkan
+
+MapsViewModelTest
+- memastikan data tidak null
+- memastikan jumlah data sesuai dengan yang diharapkan
+
+AddStoryViewModelTest
+- memastikan addstory mengembalikan data
+- memastikan data tidak null
+
+StoryRepositoryTest
+register
+- Memastikan data tidak null
+login
+- Memastikan data tidak null
+post story
+- Memastikan data tidak null
+get story by map
+- Memastikan data tidak null
+- memastikan jumlah data sesuai yang diharapkan
+get story list
+- Memastikan data tidak null
+- memastikan jumlah data sesuai yang diharapkan

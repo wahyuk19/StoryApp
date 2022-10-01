@@ -18,7 +18,7 @@ import com.dicoding.storyapp.ui.detail.DetailActivity
 import com.dicoding.storyapp.ui.utils.withDateFormat
 
 
-class StoryAdapter : PagingDataAdapter<ListStoryItem, StoryAdapter.StoryViewHolder>(DIFF_CALLBACK){
+class StoryAdapter : PagingDataAdapter<ListStoryItem, StoryAdapter.StoryViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoryViewHolder {
         val itemsStoryBinding =
@@ -65,9 +65,9 @@ class StoryAdapter : PagingDataAdapter<ListStoryItem, StoryAdapter.StoryViewHold
 
     }
 
-    companion object{
+    companion object {
 
-        private val DIFF_CALLBACK = object: DiffUtil.ItemCallback<ListStoryItem>(){
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ListStoryItem>() {
 
             override fun areItemsTheSame(oldItem: ListStoryItem, newItem: ListStoryItem): Boolean {
                 return oldItem == newItem

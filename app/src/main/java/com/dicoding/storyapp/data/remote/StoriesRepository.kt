@@ -17,10 +17,13 @@ import com.dicoding.storyapp.data.remote.response.StoriesResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
-class StoriesRepository private constructor(private val remoteDataSource: RemoteDataSource,private val apiService: ApiService): IStoriesRepository {
+class StoriesRepository private constructor(
+    private val remoteDataSource: RemoteDataSource,
+    private val apiService: ApiService
+) : IStoriesRepository {
     override fun postRegister(registerRequest: RegisterRequest): LiveData<GlobalResponse> {
         val registerRes = MutableLiveData<GlobalResponse>()
-        remoteDataSource.postRegister(callback = object : RemoteDataSource.RegisterCallback{
+        remoteDataSource.postRegister(callback = object : RemoteDataSource.RegisterCallback {
             override fun postRegister(register: GlobalResponse) {
                 val registerData = register.let {
                     GlobalResponse(
@@ -31,13 +34,13 @@ class StoriesRepository private constructor(private val remoteDataSource: Remote
                 registerRes.postValue(registerData)
             }
 
-        },registerRequest)
+        }, registerRequest)
         return registerRes
     }
 
     override fun postLogin(loginRequest: LoginRequest): LiveData<LoginResponse> {
         val loginRes = MutableLiveData<LoginResponse>()
-        remoteDataSource.postLogin(callback = object : RemoteDataSource.LoginCallback{
+        remoteDataSource.postLogin(callback = object : RemoteDataSource.LoginCallback {
             override fun postLogin(login: LoginResponse) {
                 val loginData = login.let {
                     LoginResponse(
@@ -48,7 +51,7 @@ class StoriesRepository private constructor(private val remoteDataSource: Remote
                 }
                 loginRes.postValue(loginData)
             }
-        },loginRequest)
+        }, loginRequest)
         return loginRes
     }
 
@@ -60,7 +63,7 @@ class StoriesRepository private constructor(private val remoteDataSource: Remote
         lon: Float?
     ): LiveData<GlobalResponse> {
         val storyRes = MutableLiveData<GlobalResponse>()
-        remoteDataSource.postStory(callback = object : RemoteDataSource.StoryCallback{
+        remoteDataSource.postStory(callback = object : RemoteDataSource.StoryCallback {
             override fun postStory(story: GlobalResponse) {
                 val storyData = story.let {
                     GlobalResponse(
@@ -70,13 +73,13 @@ class StoriesRepository private constructor(private val remoteDataSource: Remote
                 }
                 storyRes.postValue(storyData)
             }
-        },token, imageMultipart, description,lat,lon)
+        }, token, imageMultipart, description, lat, lon)
         return storyRes
     }
 
     override fun getStoriesByMap(token: String, location: Int): LiveData<StoriesResponse> {
         val storiesRes = MutableLiveData<StoriesResponse>()
-        remoteDataSource.getStoriesByMap(callback = object : RemoteDataSource.StoryMapCallback{
+        remoteDataSource.getStoriesByMap(callback = object : RemoteDataSource.StoryMapCallback {
             override fun getStoriesByMap(story: StoriesResponse) {
                 val stories = story.let {
                     StoriesResponse(
@@ -87,7 +90,7 @@ class StoriesRepository private constructor(private val remoteDataSource: Remote
                 }
                 storiesRes.postValue(stories)
             }
-        },token,location)
+        }, token, location)
         return storiesRes
     }
 
@@ -99,18 +102,23 @@ class StoriesRepository private constructor(private val remoteDataSource: Remote
                 pageSize = 5
             ),
             pagingSourceFactory = {
-                StoryPagingSource(apiService,token)
+                StoryPagingSource(apiService, token)
             }
         ).liveData
     }
 
-    companion object{
+    companion object {
         @Volatile
         private var instance: StoriesRepository? = null
 
-        fun getInstance(remoteDataSource: RemoteDataSource,apiService: ApiService): StoriesRepository =
-            instance ?: synchronized(this){
-                instance ?: StoriesRepository(remoteDataSource,apiService).apply { instance = this }
+        fun getInstance(
+            remoteDataSource: RemoteDataSource,
+            apiService: ApiService
+        ): StoriesRepository =
+            instance ?: synchronized(this) {
+                instance ?: StoriesRepository(remoteDataSource, apiService).apply {
+                    instance = this
+                }
             }
     }
 }

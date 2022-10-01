@@ -1,28 +1,27 @@
 package com.dicoding.storyapp.ui.main
 
-import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.asFlow
 import com.dicoding.storyapp.data.model.UserModel
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.Mock
-import org.mockito.junit.MockitoJUnitRunner
 import com.dicoding.storyapp.data.model.UserPreference
-import com.dicoding.storyapp.getOrAwaitValue
 import com.dicoding.storyapp.utils.DataDummy
 import com.dicoding.storyapp.utils.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.*
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert
+import org.junit.Before
 import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.Mock
 import org.mockito.Mockito.*
+import org.mockito.junit.MockitoJUnitRunner
 
 @ExperimentalCoroutinesApi
 @RunWith(MockitoJUnitRunner::class)
-class MainViewModelTest{
+class MainViewModelTest {
 
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
@@ -33,7 +32,7 @@ class MainViewModelTest{
     private val dummyMain = DataDummy.generateDummyMain()
 
     @Before
-    fun setup(){
+    fun setup() {
         userPreference = mock(UserPreference::class.java)
         mainViewModel = MainViewModel(userPreference)
     }
@@ -43,7 +42,7 @@ class MainViewModelTest{
 
     @Test
     fun `when user not null and return data`() = runTest {
-        val observer = Observer<UserModel>{}
+        val observer = Observer<UserModel> {}
         try {
             val expectedUser = MutableLiveData<UserModel>()
             expectedUser.value = dummyMain
@@ -53,7 +52,7 @@ class MainViewModelTest{
 
             verify(userPreference).getUser()
             Assert.assertNotNull(actualUser)
-        }finally{
+        } finally {
             mainViewModel.getUser().removeObserver(observer)
         }
     }

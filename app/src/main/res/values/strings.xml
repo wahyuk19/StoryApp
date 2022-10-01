@@ -57,5 +57,6 @@
     <string name="new_mark">Lokasi Baru</string>
     <string name="load_failed_story">Gagal memuat</string>
     <string name="load_failed_map">Gagal memuat map</string>
+    <string name="check_location">aktifkan lokasi terlebih dahulu</string>
 
 </resources>

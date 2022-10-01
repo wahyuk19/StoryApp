@@ -10,15 +10,18 @@ import com.dicoding.storyapp.data.model.UserModel
 import com.dicoding.storyapp.data.model.UserPreference
 import com.dicoding.storyapp.data.remote.StoriesRepository
 import com.dicoding.storyapp.data.remote.response.ListStoryItem
-import com.dicoding.storyapp.data.remote.response.StoriesResponse
 
-class StoryViewModel(private val storiesRepository: StoriesRepository,private val pref: UserPreference) : ViewModel() {
+class StoryViewModel(
+    private val storiesRepository: StoriesRepository,
+    private val pref: UserPreference
+) : ViewModel() {
     fun getUser(): LiveData<UserModel> {
         return pref.getUser().asLiveData()
     }
 
     fun getStories(
         token: String
-    ): LiveData<PagingData<ListStoryItem>> = storiesRepository.getStories(token).cachedIn(viewModelScope)
+    ): LiveData<PagingData<ListStoryItem>> =
+        storiesRepository.getStories(token).cachedIn(viewModelScope)
 
 }

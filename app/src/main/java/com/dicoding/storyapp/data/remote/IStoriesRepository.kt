@@ -25,7 +25,7 @@ interface IStoriesRepository {
         lon: Float?
     ): LiveData<GlobalResponse>
 
-    fun getStoriesByMap(token: String,location: Int) : LiveData<StoriesResponse>
+    fun getStoriesByMap(token: String, location: Int): LiveData<StoriesResponse>
 
     fun getStories(token: String): LiveData<PagingData<ListStoryItem>>
 }

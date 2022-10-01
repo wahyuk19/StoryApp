@@ -48,7 +48,7 @@ class DetailActivity : AppCompatActivity() {
                 )
                 .into(ivDetailPhoto)
             tvDetailName.text = getString(R.string.created_by, story.name)
-            tvDetailDate.text = story.createdAt?.withDateFormat()
+            tvDetailDate.text = story.createdAt.withDateFormat()
             tvDetailDescription.text = story.description
         }
     }

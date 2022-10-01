@@ -13,7 +13,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.Toast
@@ -54,9 +53,7 @@ class AddStoryActivity : AppCompatActivity(), OnMapReadyCallback {
     private val delayedTIme = 2000L
     private lateinit var mMap: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var latLng : LatLng
-    private var lat: Float? = null
-    private var lon: Float? = null
+    private lateinit var latLng: LatLng
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -119,19 +116,21 @@ class AddStoryActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
         }
+
     private fun checkPermission(permission: String): Boolean {
         return ContextCompat.checkSelfPermission(
             this,
             permission
         ) == PackageManager.PERMISSION_GRANTED
     }
+
     private fun getMyLastLocation() {
-        if     (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION) &&
+        if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION) &&
             checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
-        ){
+        ) {
             fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
                 if (location != null) {
-                    latLng = LatLng(location.latitude,location.longitude)
+                    latLng = LatLng(location.latitude, location.longitude)
                 } else {
                     Toast.makeText(
                         this@AddStoryActivity,
@@ -206,34 +205,39 @@ class AddStoryActivity : AppCompatActivity(), OnMapReadyCallback {
                     requestImageFile
                 )
 
-                addStoryViewModel.getUser()
-                    .observe(this) { user ->
-                        addStoryViewModel.addStory(
-                            "Bearer ${user.token}",
-                            imageMultipart,
-                            description,
-                            latLng.latitude.toFloat(),
-                            latLng.longitude.toFloat()
-                        ).observe(this) {
-                            if (it.error == false) {
-                                messageSuccess(getString(R.string.success), dialog)
-                                Handler(Looper.getMainLooper()).postDelayed({
-                                    setResult(Activity.RESULT_OK)
-                                    dialog.dismiss()
-                                    finish()
-                                }, delayedTIme)
+                try {
+                    addStoryViewModel.getUser()
+                        .observe(this) { user ->
+                            addStoryViewModel.addStory(
+                                "Bearer ${user.token}",
+                                imageMultipart,
+                                description,
+                                latLng.latitude.toFloat(),
+                                latLng.longitude.toFloat()
+                            ).observe(this) {
+                                if (it.error == false) {
+                                    messageSuccess(getString(R.string.success), dialog)
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        setResult(Activity.RESULT_OK)
+                                        dialog.dismiss()
+                                        finish()
+                                    }, delayedTIme)
 
-                            } else {
-                                messageFailed(it.message, dialog)
-                                Handler(Looper.getMainLooper()).postDelayed({
-                                    setResult(Activity.RESULT_CANCELED)
-                                    dialog.dismiss()
-                                    finish()
-                                }, delayedTIme)
+                                } else {
+                                    messageFailed(it.message, dialog)
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        setResult(Activity.RESULT_CANCELED)
+                                        dialog.dismiss()
+                                        finish()
+                                    }, delayedTIme)
+                                }
                             }
-                        }
 
-                    }
+                        }
+                } catch (e: Exception) {
+                    Toast.makeText(this, getString(R.string.check_location), Toast.LENGTH_SHORT)
+                        .show()
+                }
             } else {
                 Toast.makeText(this, getString(R.string.error_description), Toast.LENGTH_SHORT)
                     .show()

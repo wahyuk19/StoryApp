@@ -1,6 +1,5 @@
 package com.dicoding.storyapp.ui.story
 
-import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -17,7 +16,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.storyapp.R
@@ -28,8 +26,6 @@ import com.dicoding.storyapp.databinding.ActivityStoryBinding
 import com.dicoding.storyapp.ui.addstory.AddStoryActivity
 import com.dicoding.storyapp.ui.utils.messageFailed
 import com.dicoding.storyapp.ui.utils.messageLoading
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
@@ -37,9 +33,6 @@ class StoryActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityStoryBinding
     private lateinit var storyViewModel: StoryViewModel
-    private var page: Int? = null
-    private val size: Int? = null
-    private val location = 0
     private lateinit var token: String
     private lateinit var dialog: Dialog
     private val delayedTIme = 2000L
@@ -84,7 +77,7 @@ class StoryActivity : AppCompatActivity() {
             token = user.token
             storyViewModel.getStories("Bearer $token")
                 .observe(this@StoryActivity) { story ->
-                    observeStories(story,storyAdapter)
+                    observeStories(story, storyAdapter)
                 }
         }
 
@@ -111,17 +104,17 @@ class StoryActivity : AppCompatActivity() {
                 messageLoading(getString(R.string.loading), dialog)
 //                        storyViewModel.getStories("Bearer $token")
 //                            .observe(this@StoryActivity) { story ->
-                Log.e("upload","upload data")
+                Log.e("upload", "upload data")
                 storyAdapter.refresh()
 //                            }
             }
         }
 
     private fun observeStories(story: PagingData<ListStoryItem>?, storyAdapter: StoryAdapter) {
-        if(story != null){
+        if (story != null) {
             dialog.dismiss()
-            storyAdapter.submitData(lifecycle,story)
-        }else{
+            storyAdapter.submitData(lifecycle, story)
+        } else {
             dialog.dismiss()
             messageFailed(getString(R.string.load_failed_story), dialog)
             Handler(Looper.getMainLooper()).postDelayed({
